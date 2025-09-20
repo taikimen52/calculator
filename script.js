@@ -1,9 +1,9 @@
-//必要なグローバル関数、最初の入力数a,演算子の後の入力数b
+//必要なグローバル関数、一つ目の入力数a,二つ目の入力数b
 let a = 0;
 let b =0;
+let operator = ""
 
 const display = document.querySelector(".display");
-let operator ="";
 
 // 各演算関数
 const add = (a, b) => a + b;
@@ -11,39 +11,15 @@ const subtract = (a, b) => a-b;
 const multiply = (a, b) => a*b;
 const division = (a, b) => a/b;
 
-// =の挙動
-function getResult(a, b, operator){
-    if(operator === "+"){
-        return add(a, b);
-    }else if(operator === "-"){
-        return subtract(a, b);
-    }else if(operator === "*"){
-        return multiply(a, b);
-    }else if(operator === "/"){
-        return division(a, b);
-    }
-};
+
 
 //number buttons
-const six = document.querySelector("#six");
-six.addEventListener("click", ()=>{
-    display.innerText += "6"
-});
-
-const seven = document.querySelector("#seven");
-seven.addEventListener("click", ()=>{
-    display.innerText += "7"
-});
-
-const eight = document.querySelector("#eight");
-eight.addEventListener("click", ()=>{
-    display.innerText += "8"
-});
-
-const nine = document.querySelector("#nine");
-nine.addEventListener("click", ()=>{
-    display.innerText += "9"
-});
+const num = document.querySelectorAll(".num");
+num.forEach(el => {
+    el.addEventListener("click", ()=>{
+        display.innerText += el.innerText;
+    })
+})
 
 //ACボタン
 const acBtn = document.querySelector(".ac");
@@ -66,5 +42,4 @@ const eqBtn = document.querySelector("#eq");
 eqBtn.addEventListener("click", ()=>{
     b = display.innerText;
     console.log(op)
-    getResult(a, b, op);
 });
