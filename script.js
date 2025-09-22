@@ -27,7 +27,14 @@ const operations ={
 const num = document.querySelectorAll(".num");
 num.forEach(el => {
     el.addEventListener("click", ()=>{
-        calculator.displayValue += el.value;
+        if(calculator.waitingForOperand){
+            calculator.displayValue += el.value;
+            display.innertext = calculator.displayValue;
+        }else{
+            calculator.displayValue += el.value;
+            display.innerText = calculator.displayValue;
+        }
+        
     })
 })
 
@@ -37,22 +44,40 @@ function reset(){
     calculator.firstOperand = null;
     calculator.waitingForOperand = false;
     calculator.operator = null;
+    display.innerText = "";
 }
 
 //ACボタンにリセット関数をセット
 const acBtn = document.querySelector(".ac");
-acBtn.addEventListener("click", reset());
+acBtn.addEventListener("click", reset);
 
 //演算子をクリックした時の挙動
 const opBtn = document.querySelectorAll(".op");
 opBtn.forEach(el => {
     el.addEventListener("click",()=>{
-        inputA = parseFloat(display.innerText);
-        op = el.innerText;
+        if(calculator.waitingForOperand){
+            //2つのオペランドを計算
+            calculator.displayValue = operations[op](parseFloat(calculator.firstOperand), parseFloat(calculator.displayValue));
+            display.innerText = calculator.displayValue;
+            op = el.value;
+            console.log(op)
+        }else{
+            calculator.waitingForOperand = true;
+            op = el.value;
+            calculator.firstOperand = parseFloat(calculator.displayValue);
+            calculator.displayValue = "0";
+            console.log(calculator.firstOperand);
+        }
     })
 });
 
-const eqBtn = document.querySelector("#eq");
+const eqBtn = document.querySelector(".eq");
 eqBtn.addEventListener("click", ()=>{
-    console.log("eq")
+    if(calculator.firstOperand != null){
+        calculator.waitingForOperand = false;
+        calculator.displayValue = operations[op](calculator.firstOperand, parseFloat(calculator.displayValue));
+        calculator.firstOperand = calculator.displayValue;
+        display.innerText = calculator.displayValue;
+    }
+    
 });
