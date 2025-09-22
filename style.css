@@ -49,7 +49,7 @@ button {
      padding: 16px;
 }
 
-#eq {
+.eq {
     grid-column: 3/ span 2;
 }
 
