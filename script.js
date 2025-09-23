@@ -1,21 +1,15 @@
-//必要なグローバル関数、一つ目の入力数a,二つ目の入力数b
-let inputA = 0;
-let inputB = 0;
-let answer = 0;
-let op = ""
+let op = "";
 
-const display = document.querySelector(".display");
-
+//電卓の状態管理
 const calculator = {
   displayValue: '0',
   firstOperand: null,
   waitingForOperand: false,
-  operator: null
+  operator: null,
+  justcalcurated: false
 };
 
-display.innerText = calculator.displayValue;
-
-// 各演算関数をオブジェクトに
+// 各演算関数をオブジェクトとして持つ
 const operations ={
     "+" : (a, b) => a + b,
     "-" : (a, b) => a - b,
@@ -23,18 +17,28 @@ const operations ={
     "/" : (a, b) => a / b
 }
 
+const display = document.querySelector(".display");
+display.innerText = calculator.displayValue;
+
 //number buttons
 const num = document.querySelectorAll(".num");
 num.forEach(el => {
     el.addEventListener("click", ()=>{
-        if(calculator.waitingForOperand){
+        if(calculator.displayValue === "0"){
+            calculator.displayValue = "";
             calculator.displayValue += el.value;
-            display.innertext = calculator.displayValue;
-        }else{
+            display.innerText = calculator.displayValue;
+            calculator.justcalcurated = false;
+        }else if(calculator.justcalcurated){
+            calculator.displayValue = ""
             calculator.displayValue += el.value;
             display.innerText = calculator.displayValue;
         }
-        
+        else{
+            calculator.displayValue += el.value;
+            display.innerText = calculator.displayValue;   
+            calculator.justcalcurated = false;
+        }        
     })
 })
 
@@ -44,7 +48,7 @@ function reset(){
     calculator.firstOperand = null;
     calculator.waitingForOperand = false;
     calculator.operator = null;
-    display.innerText = "";
+    display.innerText = "0";
 }
 
 //ACボタンにリセット関数をセット
@@ -57,27 +61,37 @@ opBtn.forEach(el => {
     el.addEventListener("click",()=>{
         if(calculator.waitingForOperand){
             //2つのオペランドを計算
-            calculator.displayValue = operations[op](parseFloat(calculator.firstOperand), parseFloat(calculator.displayValue));
-            display.innerText = calculator.displayValue;
+            calculator.firstOperand = operations[op](parseFloat(calculator.firstOperand), parseFloat(calculator.displayValue));
+            calculator.displayValue = "0"
+            display.innerText = calculator.firstOperand;
             op = el.value;
-            console.log(op)
         }else{
             calculator.waitingForOperand = true;
             op = el.value;
-            calculator.firstOperand = parseFloat(calculator.displayValue);
+            calculator.firstOperand = calculator.displayValue;
             calculator.displayValue = "0";
-            console.log(calculator.firstOperand);
+            display.innerText = calculator.firstOperand
         }
     })
 });
 
+//=ボタン
 const eqBtn = document.querySelector(".eq");
 eqBtn.addEventListener("click", ()=>{
     if(calculator.firstOperand != null){
         calculator.waitingForOperand = false;
-        calculator.displayValue = operations[op](calculator.firstOperand, parseFloat(calculator.displayValue));
+        calculator.displayValue = operations[op](parseFloat(calculator.firstOperand), parseFloat(calculator.displayValue));
         calculator.firstOperand = calculator.displayValue;
         display.innerText = calculator.displayValue;
+        calculator.justcalcurated = true;
     }
-    
 });
+
+//小数点ボタン
+const dotBtn = document.querySelector(".dot");
+dotBtn.addEventListener("click", ()=>{
+    if(!calculator.displayValue.includes(".")){
+        calculator.displayValue += ".";
+        display.innerText = calculator.displayValue;
+    }
+})
